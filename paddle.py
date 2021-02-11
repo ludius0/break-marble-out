@@ -11,6 +11,9 @@ class Paddle(Entity):
         super().__init__(x, y, width, height, color)
         self.lock_pos = False
     
+    def get_deltas(self):
+        return (self.dx, self.dy)
+    
     def delta_new_pos(self):
         """Calculate delta coordinations to get to mouse coordinations."""
         x, y = pygame.mouse.get_pos()
