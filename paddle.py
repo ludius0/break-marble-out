@@ -46,7 +46,7 @@ class Paddle(Entity):
         if ey < ly and y >= ly: self.lock_pos = False; return
 
     
-    def update_pos(self, *entities):
+    def update(self, *entities):
         """Movemement of paddle (based on collisions with entities). Moving by mouse movement"""
         if not self.lock_pos:
             self.delta_new_pos()

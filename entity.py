@@ -1,8 +1,8 @@
-# import libs
+# libs
 import pygame
 
 class Entity():
-    def __init__(self, x, y, width, height, color):
+    def __init__(self, x, y, width, height, color, center=False):
         """        if not isinstance(color, tuple) or not len(color) == 3:
             raise Exception(f"Color should be tuple of lenght RGB colors. Got {type(color)} of lenght {len(color)}!")
         if not isinstance(size, tuple) or not len(size) == 4:
@@ -12,6 +12,7 @@ class Entity():
         self.y = y
         self.width = width
         self.height = height
+        if center: self.x, self.y = self.x - self.width // 2, self.y - self.width // 2
         self.rect = pygame.Rect(x, y, width, height) # init rect parameters
         self.color = color
     
@@ -24,6 +25,10 @@ class Entity():
     def get_pos(self, center=False):
         if center: return (self.x - self.width // 2, self.y - self.height // 2)
         return (self.x, self.y)
+    
+    def get_params(self, from_rect=False):
+        if from_rect: (self.rect.left, self.rect.top, self.rect.width, self.rect.height)
+        return (self.x, self.y, self.width, self.height)
     
     def get_rect(self):
         return self.rect
