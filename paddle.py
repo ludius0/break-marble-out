@@ -20,7 +20,6 @@ class Paddle(Entity):
         x, y = x - self.width // 2, y - self.height // 2 # get center
         self.dx, self.dy = x - self.x, y - self.y   # difference between new coordination and old
         ## regulate speed
-        self.dx, self.dy = self.dx * 0.9, self.dy * 0.9 #  90%
         if abs(self.dx) > e*10: self.dx = abs(self.dx) / self.dx # setting top speed limit for dx
         if abs(self.dy) > e*10: self.dy = abs(self.dy) / self.dy # setting top speed limit for dy
         return (self.dx, self.dy)
