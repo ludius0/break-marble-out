@@ -38,6 +38,9 @@ class Entity():
     def get_rect(self):
         return self.rect
     
+    def update_deltas(self, dx, dy):
+        self.dx, self.dy = dx, dy
+    
     def update_params(self, x, y, width, height):
         """Update parameters in Entity class"""
         self.x = x

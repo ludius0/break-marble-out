@@ -10,7 +10,7 @@ class Paddle(Entity):
         """Entity which is controled by player's mouse."""
         super().__init__(x, y, width, height, color)
         self.lock_pos = False
-        self.top_speed = 11
+        self.top_speed = 6
     
     def delta_new_pos(self):
         """Calculate delta coordinations to get to mouse coordinations."""
@@ -36,13 +36,11 @@ class Paddle(Entity):
         x, y = pygame.mouse.get_pos() # current x, y
         lx, ly = self.lock_coord
         ex, ey = self.record_ent_pos
-        #print((x, y), (ex, ey), (lx, ly))
         if ex > lx and x <= lx: self.lock_pos = False; return
         if ex < lx and x >= lx: self.lock_pos = False; return
         if ey > ly and y <= ly: self.lock_pos = False; return
         if ey < ly and y >= ly: self.lock_pos = False; return
 
-    
     def update(self, *entities):
         """Movemement of paddle (based on collisions with entities). Moving by mouse movement"""
         if not self.lock_pos:
@@ -53,6 +51,6 @@ class Paddle(Entity):
             if not self.check_collision(*entities): # if entities in input, check collisions with them
                 self.update_rect(self.shadow_rect)
                 return
-            self.lock_coord = (self.x - self.width // 2, self.y - self.height // 2) # get center
+            self.lock_coord = self.get_pos(center=True) # get center
             self.lock_pos = True # if get stuck
         self.try_unlocked()

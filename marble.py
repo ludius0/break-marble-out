@@ -15,12 +15,6 @@ class Marble(Entity):
         self.velocity = 1
         self.mass = 1
         self.top_speed = 2
-        # for accuracy
-        self.collision_cooldown = 1000
-        self.refresh_collision_cooldown()
-    
-    def refresh_collision_cooldown(self):
-        self.collis_coold = self.collision_cooldown
     
     def regulate_speed(self, delta):
         """Regulate max speed of delta values, which updates positions (x, y)"""
@@ -28,20 +22,21 @@ class Marble(Entity):
             return abs(delta) / delta * self.top_speed
         return delta
     
-    def update_deltas(self, dx, dy, add_velocity=False):
+    def update_deltas(self, dx, dy, add_velocity=False): # replacing subclass function
         """Replace current deltas with new ones"""
-        self.prev_speed = (self.dx, self.dy)
+        self.prev_speed = self.get_deltas()
         # regulate speed
         dx, dy = self.regulate_speed(dx), self.regulate_speed(dy)
-        if not add_velocity: self.dx, self.dy = dx, dy
+        if not add_velocity: 
+            self.dx, self.dy = dx, dy
         else: # increase speed (in case of bounce_from_paddle())
             self.dx, self.dy = self.dx+dx, self.dx+dy # increase speed
             self.dx, self.dy = self.regulate_speed(self.dx), self.regulate_speed(self.dy)
     
     def get_paddle_deltas(self, paddle):
-        """Save deltas from 'Paddle' class and update own if some movement"""
+        """Save deltas from 'Paddle' class and update own if some movement (in check_collision())"""
         dx, dy = paddle.get_deltas()
-        if abs(dx)+abs(dy) > 0: self.update_deltas(dx, dy) ; return
+        if abs(dx)+abs(dy) > 0: self.update_deltas(dx, dy)
 
     def entity_coords(self, entity):
         """Record params of entity from collision"""
@@ -53,18 +48,29 @@ class Marble(Entity):
             if self.detect_collision(entity):
                 if entity.__class__.__name__ != "Paddle":
                     entity.destroy() # destroy blocks if not 'Paddle'
-                else: self.get_paddle_deltas(entity)
+                else: # Paddle
+                    self.get_paddle_deltas(entity)
+                    #self.if_in_paddle(entity)
                 self.bounce_of = entity.__class__.__name__
                 self.entity_coords(entity)
-                self.refresh_collision_cooldown()
                 return True
         return False
     
+    def if_in_paddle(self, paddle): # NOTE: not working
+        """If 'Marble' is in 'Paddle', than go back with deltas (in check_collision())"""
+        x, y = self.get_pos()
+        dx, dy = self.get_deltas()
+        px, py, w, h = paddle.get_params(from_rect=True)
+        while 1:
+            if px-dx < self.x and px+w+dx > self.x: x += -dx
+            elif py-dy < self.y and py+h+dy > self.y: y += -dy
+            else: break
+            self.update_rect(x, y, self.width, self.height)
+
     def bounce_from_paddle(self):
-        # get entities to find Paddle and based on abs(x, y) determine if update delta or bounce
-        # return boolean
+        """Add deltas to Marble or flip direction of deltas"""
         dx, dy = self.prev_speed
-        new_dx, new_dy = self.dx, self.dy
+        new_dx, new_dy = self.get_deltas()
         # increse delta speed if 'Paddle' hit it with negative or non-negative x, y
         if (dx < 0 and self.dx < 0) or (dx > 0 and self.dx > 0): new_dx = dx
         if (dy < 0 and self.dy < 0) or (dy > 0 and self.dy > 0): new_dy = dy
@@ -76,26 +82,22 @@ class Marble(Entity):
         """Bounce from 'Blocks' entities (or from 'Paddle') by flipping to negative or positive deltas"""
         ex, ey, w, h = self.collis_entity
         dx, dy = self.get_deltas()
-        #print(ex, ex+ew, ex+ew//2 < self.x)
-        # left and right
-        if ex > self.x: dx = dx *-1; print("ya")
-        elif ex+w <= self.x+2: dx = dx *-1; print("yes")
-        # top and bottom
-        if ey > self.y: dy = dy *-1; print("duh")
-        elif ey+h <= self.y+2: dy = dy *-1; print("no")
+        x, y = self.get_pos()
+        if ex > x or ex+w <= x+2: dx = dx *-1 # left and right
+        if ey > y or ey+h <= y+2: dy = dy *-1 # top and bottom
         self.update_deltas(dx, dy)
     
     def update_pos(self):
+        """Update x,y based on deltas and velocity"""
         x = self.x + (self.dx * self.velocity)
         y = self.y + (self.dy * self.velocity)#**mass
         self.update_rect(x, y, self.width, self.height)
 
     def update(self, *entities):
-        if self.collis_coold > 0:
-            if self.check_collision(*entities):
-                if not self.bounce_of == "Paddle":
-                    self.bounce()
-                else: self.bounce_from_paddle()
-            self.update_pos()
-            return
-        self.collision_cooldown -= 1
+        """Run logic for updating its position/actions in the game"""
+        if self.check_collision(*entities):
+            if not self.bounce_of == "Paddle":
+                self.bounce()
+            else: self.bounce_from_paddle()
+        self.update_pos()
+        return
