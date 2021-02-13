@@ -2,8 +2,6 @@
 Game like breakout or bolo. Made with pygame.
 
 TODO:
-- class(entity) for blocks
-- marble and its functions
-- polish code & add sprites
-    - make it also easier for debugging
+- solve issue with having Marble stucked in Paddle
+- clear code
 - write another TODO
