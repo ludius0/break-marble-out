@@ -36,7 +36,7 @@ class Marble(Entity):
     def get_paddle_deltas(self, paddle):
         """Save deltas from 'Paddle' class and update own if some movement (in check_collision())"""
         dx, dy = paddle.get_deltas()
-        if abs(dx)+abs(dy) > 0: self.update_deltas(dx, dy)
+        if abs(dx)+abs(dy) > 0.1: self.update_deltas(dx, dy)
 
     def entity_coords(self, entity):
         """Record params of entity from collision"""
