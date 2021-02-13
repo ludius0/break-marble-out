@@ -10,9 +10,7 @@ class Paddle(Entity):
         """Entity which is controled by player's mouse."""
         super().__init__(x, y, width, height, color)
         self.lock_pos = False
-    
-    def get_deltas(self):
-        return (self.dx, self.dy)
+        self.top_speed = 11
     
     def delta_new_pos(self):
         """Calculate delta coordinations to get to mouse coordinations."""
@@ -20,8 +18,8 @@ class Paddle(Entity):
         x, y = x - self.width // 2, y - self.height // 2 # get center
         self.dx, self.dy = x - self.x, y - self.y   # difference between new coordination and old
         ## regulate speed
-        if abs(self.dx) > e*10: self.dx = abs(self.dx) / self.dx # setting top speed limit for dx
-        if abs(self.dy) > e*10: self.dy = abs(self.dy) / self.dy # setting top speed limit for dy
+        if abs(self.dx) > e*self.top_speed: self.dx = abs(self.dx) / self.dx * e*self.top_speed # setting top speed limit for dx
+        if abs(self.dy) > e*self.top_speed: self.dy = abs(self.dy) / self.dy * e*self.top_speed # setting top speed limit for dy
         return (self.dx, self.dy)
     
     def check_collision(self, *entities):

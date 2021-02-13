@@ -2,7 +2,7 @@
 import pygame
 
 class Entity():
-    def __init__(self, x, y, width, height, color, center=False):
+    def __init__(self, x, y, width, height, color):
         """        if not isinstance(color, tuple) or not len(color) == 3:
             raise Exception(f"Color should be tuple of lenght RGB colors. Got {type(color)} of lenght {len(color)}!")
         if not isinstance(size, tuple) or not len(size) == 4:
@@ -12,12 +12,17 @@ class Entity():
         self.y = y
         self.width = width
         self.height = height
-        if center: self.x, self.y = self.x - self.width // 2, self.y - self.width // 2
         self.rect = pygame.Rect(x, y, width, height) # init rect parameters
         self.color = color
+        # delta values for updating its movement
+        self.dx = 0 
+        self. dy = 0
     
     def __repr__(self):
         return f"Entity: '{type(self).__name__}'; Rect: color{self.color}, params(x: {self.x}, y: {self.y}, width: {self.width}, height: {self.height})"
+    
+    def get_deltas(self):
+        return (self.dx, self.dy)
     
     def get_color(self):
         return self.color

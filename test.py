@@ -31,7 +31,7 @@ pygame.display.set_mode(p.window_size())
 # generate level
 blocks = []
 for i in range(0+50, p.width-100+50, 120):
-    blocks.append(Block(i, 40, 100, 50, color=(255, 0, 0), center=True))
+    blocks.append(Block(i, 40, 100, 50, color=(255, 0, 0)))
 print("N of blocks:", len(blocks))
 
 
