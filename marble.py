@@ -14,7 +14,7 @@ class Marble(Entity):
         self.bounce_of = None
         self.velocity = 1
         self.mass = 1
-        self.top_speed = 2
+        self.top_speed = 6
     
     def regulate_speed(self, delta):
         """Regulate max speed of delta values, which updates positions (x, y)"""
@@ -83,8 +83,8 @@ class Marble(Entity):
         ex, ey, w, h = self.collis_entity
         dx, dy = self.get_deltas()
         x, y = self.get_pos()
-        if ex > x or ex+w <= x+2: dx = dx *-1 # left and right
-        if ey > y or ey+h <= y+2: dy = dy *-1 # top and bottom
+        if ex > x or ex+w <= x+3: dx = dx *-1 * 2 # left and right
+        if ey > y or ey+h <= y+3: dy = dy *-1 * 2 # top and bottom
         self.update_deltas(dx, dy)
     
     def update_pos(self):
