@@ -10,7 +10,7 @@ class Paddle(Entity):
         """Entity which is controled by player's mouse."""
         super().__init__(x, y, width, height, color)
         self.lock_pos = False
-        self.top_speed = 6
+        self.top_speed = 2
     
     def delta_new_pos(self):
         """Calculate delta coordinations to get to mouse coordinations."""

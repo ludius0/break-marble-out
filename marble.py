@@ -50,22 +50,10 @@ class Marble(Entity):
                     entity.destroy() # destroy blocks if not 'Paddle'
                 else: # Paddle
                     self.get_paddle_deltas(entity)
-                    #self.if_in_paddle(entity)
                 self.bounce_of = entity.__class__.__name__
                 self.entity_coords(entity)
                 return True
         return False
-    
-    def if_in_paddle(self, paddle): # NOTE: not working
-        """If 'Marble' is in 'Paddle', than go back with deltas (in check_collision())"""
-        x, y = self.get_pos()
-        dx, dy = self.get_deltas()
-        px, py, w, h = paddle.get_params(from_rect=True)
-        while 1:
-            if px-dx < self.x and px+w+dx > self.x: x += -dx
-            elif py-dy < self.y and py+h+dy > self.y: y += -dy
-            else: break
-            self.update_rect(x, y, self.width, self.height)
 
     def bounce_from_paddle(self):
         """Add deltas to Marble or flip direction of deltas"""
@@ -83,8 +71,17 @@ class Marble(Entity):
         ex, ey, w, h = self.collis_entity
         dx, dy = self.get_deltas()
         x, y = self.get_pos()
-        if ex > x or ex+w <= x+3: dx = dx *-1 * 2 # left and right
-        if ey > y or ey+h <= y+3: dy = dy *-1 * 2 # top and bottom
+        if ex > x: # left
+            dx *= -1 * 2
+        elif ex+w <= x+3: # right
+            dx *= -1
+            x = ex+w # acc for speed
+        if ey > y: # top
+            dy *= -1 * 2
+        elif ey+h <= y+3: # bottom
+            dy *= -1
+            y = ey+h
+        self.update_rect(x, y, self.width, self.height)
         self.update_deltas(dx, dy)
     
     def update_pos(self):
