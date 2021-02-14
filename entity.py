@@ -3,20 +3,12 @@ import pygame
 
 class Entity():
     def __init__(self, x, y, width, height, color):
-        """        if not isinstance(color, tuple) or not len(color) == 3:
-            raise Exception(f"Color should be tuple of lenght RGB colors. Got {type(color)} of lenght {len(color)}!")
-        if not isinstance(size, tuple) or not len(size) == 4:
-            raise Exception(f"Size should be tuple of lenght (x, y, width, height). Got {type(size)} of lenght {len(size)}!")"""
         # Parameters
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
         self.rect = pygame.Rect(x, y, width, height) # init rect parameters
-        self.color = color
+        self._color = color
         # delta values for updating its movement
-        self.dx = 0 
-        self. dy = 0
+        self._dx = 0 
+        self._dy = 0
     
     def __repr__(self):
         return f"Entity: '{type(self).__name__}'; Rect: color{self.color}, params(x: {self.x}, y: {self.y}, width: {self.width}, height: {self.height})"
@@ -31,8 +23,7 @@ class Entity():
         if center: return (self.x - self.width // 2, self.y - self.height // 2)
         return (self.x, self.y)
     
-    def get_params(self, from_rect=False):
-        if from_rect: (self.rect.left, self.rect.top, self.rect.width, self.rect.height)
+    def get_params(self):
         return (self.x, self.y, self.width, self.height)
     
     def get_rect(self):
@@ -40,13 +31,6 @@ class Entity():
     
     def update_deltas(self, dx, dy):
         self.dx, self.dy = dx, dy
-    
-    def update_params(self, x, y, width, height):
-        """Update parameters in Entity class"""
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
     
     def update_rect(self, *args):
         """Update coordinations and form of Entity"""
@@ -56,10 +40,53 @@ class Entity():
             self.rect.update(args[0], args[1], args[2], args[3])
         else: 
             raise Exception(f"Error with input -> want: pygame.Rect or [x, y, width, height], but got {args}")
-        self.update_params(self.rect.left, self.rect.top, self.rect.width, self.rect.height) # update params
     
     def detect_collision(self, entity):
         """Collision with another Entity. Return bool."""
         if not isinstance(entity, type(Entity)):
             return self.rect.colliderect(entity)
         return self.rect.colliderect(entity.get_rect())
+
+    ### coords
+    @property
+    def x(self): return self.rect.left
+    
+    @x.setter
+    def x(self, value): self.rect.update(value, y, width, height)
+
+    @property
+    def y(self): return self.rect.top
+    
+    @y.setter
+    def y(self, value): self.rect.update(x, value, width, height)
+
+    @property
+    def width(self): return self.rect.width
+    
+    @width.setter
+    def width(self, value): self.rect.update(x, y, value, height)
+
+    @property
+    def height(self): return self.rect.height
+    
+    @height.setter
+    def height(self, value): self.rect.update(x, y, width, value)
+
+    ### params
+    @property
+    def color(self): return self._color
+    
+    @color.setter
+    def color(self, value): self._color = value
+
+    @property
+    def dx(self): return self._dx
+    
+    @dx.setter
+    def dx(self, value): self._dx = value
+
+    @property
+    def dy(self): return self._dy
+    
+    @dy.setter
+    def dy(self, value): self._dy = value

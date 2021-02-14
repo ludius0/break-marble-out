@@ -37,13 +37,14 @@ print("N of blocks:", len(blocks))
 
 print("-"*20)
 
-clock = pygame.time.Clock()
+FPS = 100
+clock = pygame.time.Clock() # Create a clock object
 
 # main loop
 running = True
 while running:
     #time.sleep(0.01)
-    clock.tick(100)
+    clock.tick(FPS)
 
     # draw objects and screen
     w.draw_bg()

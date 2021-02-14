@@ -40,7 +40,7 @@ class Marble(Entity):
 
     def entity_coords(self, entity):
         """Record params of entity from collision"""
-        self.collis_entity = entity.get_params(from_rect=True)
+        self.collis_entity = entity.get_params()
 
     def check_collision(self, *entities):
         """Return bool if collision with another entity. With 'Paddle' get also its deltas"""
@@ -71,15 +71,16 @@ class Marble(Entity):
         ex, ey, w, h = self.collis_entity
         dx, dy = self.get_deltas()
         x, y = self.get_pos()
+        print(ex+w, x+self.width)
         if ex > x: # left
-            dx *= -1 * 2
-        elif ex+w <= x+3: # right
-            dx *= -1 * 2
+            dx *= -1
+        elif ex+w <= x+self.width: # right
+            dx *= -1
             x = ex+w # acc for speed
         if ey > y: # top
-            dy *= -1 * 2
-        elif ey+h <= y+3: # bottom
-            dy *= -1 * 2
+            dy *= -1
+        elif ey+h <= y+self.height: # bottom
+            dy *= -1
             y = ey+h
         self.update_rect(x, y, self.width, self.height)
         self.update_deltas(dx, dy)
@@ -97,4 +98,3 @@ class Marble(Entity):
                 self.bounce()
             else: self.bounce_from_paddle()
         self.update_pos()
-        return
