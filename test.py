@@ -54,6 +54,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             sys.exit()
+        # NOTE: get mouse pos from here
     
     # update objects (their pos) and screen
     player.update(*blocks, *walls)

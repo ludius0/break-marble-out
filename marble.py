@@ -74,12 +74,12 @@ class Marble(Entity):
         if ex > x: # left
             dx *= -1 * 2
         elif ex+w <= x+3: # right
-            dx *= -1
+            dx *= -1 * 2
             x = ex+w # acc for speed
         if ey > y: # top
             dy *= -1 * 2
         elif ey+h <= y+3: # bottom
-            dy *= -1
+            dy *= -1 * 2
             y = ey+h
         self.update_rect(x, y, self.width, self.height)
         self.update_deltas(dx, dy)
