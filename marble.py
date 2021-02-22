@@ -71,7 +71,6 @@ class Marble(Entity):
         ex, ey, w, h = self.collis_entity
         dx, dy = self.get_deltas()
         x, y = self.get_pos()
-        print(ex+w, x+self.width)
         if ex > x: # left
             dx *= -1
         elif ex+w <= x+self.width: # right
