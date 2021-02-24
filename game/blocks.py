@@ -7,6 +7,7 @@ from .material import Material
 from .entity import RectEntity
 
 class Block(RectEntity):
+    """Game entity that is used for interacting and action inside 'Marble' and 'Paddle'."""
     def __init__(self, width: int, height: int, pos=Vec2(100, 100)):
         super().__init__(width, height, position=pos)
         self.destroyed = False

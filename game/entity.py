@@ -6,8 +6,10 @@ from .vector import Vec2
 from .material import Material
 
 class Entity():
-    """Basic backbone of all game interactive elements. It stores its position or velocity or acceleration as vector (Vec2) and additional information as 'Material',
-    which is for computing 'Marble' velocity, speed and bouncness."""
+    """
+    Basic backbone of all game interactive elements. It stores its position or velocity or acceleration as vector (Vec2) and additional information as 'Material',
+    which is for computing 'Marble' velocity, speed and bouncness.
+    """
 
     _velocity = Vec2.zeros() # delta x and delta y
     _acceleration = Vec2.zeros() # like gravity
@@ -22,14 +24,6 @@ class Entity():
     
     def __repr__(self) -> str:
         return f"Entity: '{type(self).__name__}'; Pos: {self.position}); Mat: {self.material}"
-    
-    def simulate_motion(self, dtime: float) -> None:
-        if self.material.mass:
-            self.velocity = 2. * self.position - self.prev_pos
-            self.prev_pos = self.position
-            self.position = self.velocity + self.acceleration * dtime**2.
-            self.velocity = self.position - self.prev_pos
-            self.acceleration = Vec2.zeros()
     
     def accelerate(self, rate: float, dtime: float) -> None:
         self.acceleration += rate * dtime
@@ -85,6 +79,7 @@ class Entity():
 
 
 class RectEntity(Entity):
+    """On top of 'Entity' class. Holds parameters for pygame libs."""
     def __init__(self, width: int, height: int, **kwargs) -> None:
         assert isinstance(width, (int, float)) and isinstance(height, (int, float))
         super().__init__(**kwargs)
@@ -99,87 +94,19 @@ class RectEntity(Entity):
         assert isinstance(entity, RectEntity)
         return rect.colliderect(entity.rect)
     
-    def check_collision(self, *entities, rect=None) -> bool:
-        """Check if one from all entities (as 'RectEntity') provided as argument is colliding with this 'RectEntity'. Return bool."""
+    def check_collision(self, *entities, rect=None) -> None or "RectEntity":
+        """Check if one from all entities (as 'RectEntity') provided as argument is colliding with this 'RectEntity'. Return None or RectEntity."""
         if rect == None: rect = self.rect
         for entity in entities:
             if self.detect_collision(entity, rect):
-                return True
-        return False
+                return entity
+        return None
     
     def get_color(self):
         return self.color
   
     def get_middle(self):
         return self.width//2, self.height//2
-    
-    def bounce_right(self, rect_x) -> None:
-        distance = self.position - self.previous
-        self.position.x = -self.position.x
-        self.previous.x = self.position.x + self.material.bounce * distance.y
-        #
-        j = distance.y
-        k = distance.x * self.material.friction
-        t = j
-        if j != 0.:
-            t /= abs(j)
-        if abs(j) <= abs(k):
-            if j * t > 0.:
-                self.position.y -= 2. * j
-        else:
-            if k * t > 0.:
-                self.position.y -= k
-
-    def bounce_left(self, rect_x) -> None:
-        distance = self.position - self.previous
-        self.position.x = 2. * rect_x - self.position.x
-        self.previous.x = self.position.x + self.material.bounce * distance.y
-        #
-        j = distance.y
-        k = distance.x * self.material.friction
-        t = j
-        if j != 0.:
-            t /= abs(j)
-        if abs(j) <= abs(k):
-            if j * t > 0.:
-                self.position.y -= 2. * j
-        else:
-            if k * t > 0.:
-                self.position.y -= k
-
-    def bounce_up(self, rect_y) -> None:
-        distance = self.position - self.previous
-        self.position.y = -self.position.y
-        self.previous.y = self.position.y + self.material.bounce * distance.y
-        #
-        j = distance.x
-        k = distance.y * self.material.friction
-        t = j
-        if j != 0.:
-            t /= abs(j)
-        if abs(j) <= abs(k):
-            if j * t > 0.:
-                self.position.x -= 2. * j
-        else:
-            if k * t > 0.:
-                self.position.x -= k
-
-    def bounce_bottom(self, rect_y) -> None:
-        distance = self.position - self.previous
-        self.position.y = 2. * rect_y - self.position.y
-        self.previous.y = self.position.y + self.material.bounce * distance.y
-        #
-        j = distance.x
-        k = distance.y * self.material.friction
-        t = j
-        if j != 0.0:
-            t /= abs(j)
-        if abs(j) <= abs(k):
-            if j * t > 0.:
-                self.position.x -= 2. * j
-        else:
-            if k * t > 0.:
-                self.position.x -= k
     
     @property
     def rect(self) -> pygame.Rect:

@@ -9,6 +9,19 @@ __all__ = ["Vec2"]
 Variation = Union["Vec2" or Tuple[float, float] or float]
 
 class Vec2(NamedTuple):
+    """
+    Vector class behaving like tuple, which hold x and y value (can be only floats).
+    Mathematical operations:
+    >>> Vec2(6, 7) * 2 + Vec2(2., 2.)
+    >>> Vec2(14, 16)
+    Set/get item:
+    >>> v = Vec2(3.2, 1.3)
+    >>> v.x # or [0] or ['x']
+    >>> 3.2
+    >>> v.y = 1
+    >>> Vec2(3.2, 1.)
+    For every operations or function it returns new Vec2 (better for debugging).
+    """
     x: float = 0.
     y: float = 0.
 

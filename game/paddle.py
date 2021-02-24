@@ -7,7 +7,11 @@ from .material import Material
 from .entity import RectEntity
 
 class Paddle(RectEntity):
-    """Player that is controled by the computer mouse. If it (will) hit a wall or a 'Block', than it won't update until the mouse move away to some free space."""
+    """
+    Player that is controled by the computer mouse. 
+    If it (will) hit a wall or a 'Block', 
+    than it won't update until the mouse move away to some free space.
+    """
     def __init__(self, width: int, height: int, pos=Vec2(600, 600), color=(0, 0, 255)) -> None:
         super().__init__(width, height, position=pos, color=color)
     
@@ -29,11 +33,12 @@ class Paddle(RectEntity):
             new_pos = _pos + (delta_pos*step) # new pos based on step (to final destination)
             testing_rect = pygame.Rect(*new_pos, self.width, self.height) # create rect on new pos to check if collision occure
             # check if in new position is some collision
-            if self.check_collision(*entities, rect=testing_rect):
+            collis = self.check_collision(*entities, rect=testing_rect)
+            if collis != None:
                 # Try slide across Y
                 new_pos_y = Vec2(self.position.x, new_pos.y) # pos along new Y
                 rect_y = pygame.Rect(*new_pos_y, self.width, self.height)   # rect from new Y to check collision
-                if not self.check_collision(*entities, rect=rect_y): # if any collision on new Y pos, than call present function with new parameters (as destination)
+                if self.check_collision(*entities, rect=rect_y) == None: # if any collision on new Y pos, than call present function with new parameters (as destination)
                     distance = new_pos_y - self.position
                     delta_pos = distance / dtime
                     self._steps(delta_pos, dtime, *entities)
@@ -42,7 +47,7 @@ class Paddle(RectEntity):
                 # Try slide across X (same like Y)
                 new_pos_x = Vec2(new_pos.x, self.position.y)
                 rect_x = pygame.Rect(*new_pos_x, self.width, self.height)
-                if not self.check_collision(*entities, rect=rect_x):
+                if self.check_collision(*entities, rect=rect_x) == None:
                     distance = new_pos_x - self.position
                     delta_pos = distance / dtime
                     self._steps(delta_pos, dtime, *entities)

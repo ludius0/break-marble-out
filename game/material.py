@@ -1,4 +1,8 @@
 class Material():
+    """
+    Holds data (parameters) about entities or other stuffs. 
+    It holds data for friction, bounce and mass in floats between 0 to 1.
+    """
     def __init__(self, friction: float = 0.5, bounce: float = 0.5, mass: float = 1.) -> None:
         assert 0 < friction <= 1. and 0 < bounce <= 1. and 0 < mass <= 1.
         self._friction = friction    # 0 -> ice; 1. -> glue

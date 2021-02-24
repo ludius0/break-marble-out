@@ -1,7 +1,10 @@
 # libs
 import pygame
 
-class Render(): # rename to Render
+class Render():
+    """
+    Pygame rendering window. It holds parameters for screen size and is drawing background and entities on the screen.
+    """
     def __init__(self, size: tuple, bg_c=(0, 0, 0)) -> None:
         """Render entities, background, score, etc..."""
         assert isinstance(size, tuple) and len(size) == 2

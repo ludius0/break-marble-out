@@ -6,7 +6,7 @@ pygame.init()
 # init game structure
 dtime = 10
 win = Render((1000, 800))
-player = Paddle(100, 25)
+player = Paddle(100, 50)
 ball = Marble(10, 10)
 
 # generate level
@@ -17,6 +17,11 @@ blocks.append(Block(100, 50, pos=Vec2(300, 120)))
 blocks.append(Block(100, 50, pos=Vec2(400, 200)))
 blocks.append(Block(100, 50, pos=Vec2(420, 290)))
 print("N of blocks:", len(blocks))
+wall1 = Block(1000, 10, pos=Vec2(0, 0))
+wall2 = Block(1000, 10, pos=Vec2(0, 800-10))
+wall3 = Block(10, 800, pos=Vec2(0, 0))
+wall4 = Block(10, 800, pos=Vec2(1000-10, 0))
+walls = [wall1, wall2, wall3, wall4]
 
 while 1:
     # draw game
@@ -31,8 +36,8 @@ while 1:
             sys.exit()
     
     # update game
-    player.update(*blocks, dtime=dtime)
-    ball.update(dtime=10)
+    player.update(*blocks, *walls, dtime=dtime)
+    ball.update(player, *blocks, *walls, dtime=10)
 
 """    new_blocks = []
     for idx, b in enumerate(blocks):
