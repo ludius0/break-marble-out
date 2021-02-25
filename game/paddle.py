@@ -35,6 +35,17 @@ class Paddle(RectEntity):
             # check if in new position is some collision
             collis = self.check_collision(*entities, rect=testing_rect)
             if collis != None:
+                
+                if collis.__class__.__name__ == "Marble": # special case if marble is stuck between player and entity
+                    m_vel = collis.position - collis.prev_pos
+                    print(m_vel)
+                    if abs(m_vel.x) > 0.001 or abs(m_vel.y) > 0.001:
+                        collis.acceleration /= 10
+                        print("ya")
+                    if abs(m_vel.x) == 0. and abs(m_vel.y) == 0.:
+                        collis.acceleration = delta_pos
+                    continue
+
                 # Try slide across Y
                 new_pos_y = Vec2(self.position.x, new_pos.y) # pos along new Y
                 rect_y = pygame.Rect(*new_pos_y, self.width, self.height)   # rect from new Y to check collision
@@ -68,3 +79,4 @@ class Paddle(RectEntity):
         delta_pos = distance / dtime
 
         self._steps(delta_pos, dtime, *entities)
+        self.acceleration /= 10000000

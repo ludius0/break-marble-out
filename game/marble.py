@@ -24,7 +24,8 @@ class Marble(RectEntity):
     def simulate_motion(self, dtime: float) -> None:
         #self.velocity = self.position - self.prev_pos
         self.restrict_speed()
-        self.position += self.acceleration #* dtime**2.
+        if not self.material.mass:
+            self.position += self.acceleration #* dtime**2.
     
     def _bounce_of(self, collis_ent) -> None:
         x, y = collis_ent.position
@@ -34,10 +35,12 @@ class Marble(RectEntity):
 
         if (mx==x and my==y) or (mx+mw==x+w and my==y) or (mx==x and my+mh==y+h) or (mx+mw==x+w and my+mh==y+h):
             self.acceleration = Vec2(-self.acceleration.x, -self.acceleration.y)
-        elif self.position.x<=x+w and self.position.x+self.width>=x\
+        if self.position.x<=x+w and self.position.x+self.width>=x-1\
             and (self.position.y+self.height>=y+h or self.position.y<y):
             self.acceleration = Vec2(self.acceleration.x, -self.acceleration.y)
-        else:
+        #else:
+        #    self.acceleration = Vec2(-self.acceleration.x, self.acceleration.y)
+        elif self.position.y<=y+h and self.position.y+self.height>=y-1:
             self.acceleration = Vec2(-self.acceleration.x, self.acceleration.y)
     
     def _move(self, dtime):
@@ -54,13 +57,17 @@ class Marble(RectEntity):
     def _collision(self, *entities, dtime=1):
         collis = self.check_collision(*entities)
         if collis != None:
-            if collis.__class__.__name__ == "Paddle":
-                paddle_vel = (collis.position - collis.prev_pos).neg()
-                print(paddle_vel, self.acceleration)
-                self.acceleration += paddle_vel / 1000000 if paddle_vel != Vec2(0., 0.) else 0
+            print(collis.__class__.__name__)
+            if collis.__class__.__name__ == "Paddle": #
+                paddle_vel = collis.velocity * -1 # flip direction
+                if paddle_vel.x*self.velocity.x > 0 and paddle_vel.y*self.velocity.y > 0: # find if velocity of 'Paddle' and 'Marble' is heading to same direction
+                    #print(paddle_vel, "-"*4)
+                    self.acceleration += paddle_vel / 1000 #if paddle_vel != Vec2(0., 0.) else 0
+                #self._move(1)
+                #return
             self._bounce_of(collis)
             self._move(dtime)
-            self._out_of(*entities)
+            #self._out_of(*entities)
             #self._collision(*entities, dtime=1)
         return
     

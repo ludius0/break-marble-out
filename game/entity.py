@@ -14,7 +14,7 @@ class Entity():
     _velocity = Vec2.zeros() # delta x and delta y
     _acceleration = Vec2.zeros() # like gravity
 
-    def __init__(self, position=Vec2.zeros(), material=Material(), color=(255, 0, 0)) -> None:
+    def __init__(self, position=Vec2.zeros(), material=Material(mass=0), color=(255, 0, 0)) -> None:
         assert isinstance(position, Vec2) and isinstance(material, Material)
         assert isinstance(color, tuple) and len(color) == 3
         self._position = position
@@ -40,6 +40,7 @@ class Entity():
         assert isinstance(new_vec, Vec2)
         self.prev_pos = self._position
         self._position = new_vec
+        self.velocity = self.position - self.prev_pos
     
     @property
     def prev_pos(self) -> Vec2:
