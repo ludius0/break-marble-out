@@ -28,7 +28,8 @@ class Marble(RectEntity):
         """
         self.update_prev_pos()
         self.restrict_speed()
-        self.position += self.acceleration
+        move = self.acceleration * (self.dtime**-1)
+        self.position += move
     
     def _move(self) -> None:
         """
@@ -72,13 +73,15 @@ class Marble(RectEntity):
         Backbone calculation for updating position of 'Marble'.
         """
         assert isinstance(dtime, int) and dtime != 0
-        collis = self.check_collision(*entities)
-        if collis != None:
-            self._bounce(collis)
+        self.dtime = dtime
+        for step in range(1, 1+dtime):
+            collis = self.check_collision(*entities)
+            if collis != None:
+                self._bounce(collis)
 
-            if collis.__class__.__name__ == "Paddle":
-                #print(collis.velocity)
-                self.acceleration += collis.velocity
-            #self._get_out(*entities)
+                if collis.__class__.__name__ == "Paddle":
+                    #print(collis.velocity)
+                    self.acceleration += collis.velocity
+                #self._get_out(*entities)
 
-        self._move()
+            self._move()

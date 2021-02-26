@@ -36,7 +36,7 @@ while 1:
             sys.exit()
     
     # update game
-    ball.update(player, *blocks, *walls, dtime=1)
+    ball.update(player, *blocks, *walls, dtime=100)
     player.update(ball, *blocks, *walls, dtime=dtime)
 
 """    new_blocks = []
