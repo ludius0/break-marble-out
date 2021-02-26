@@ -15,7 +15,10 @@ class Marble(RectEntity):
         super().__init__(width, height, position=pos, color=color)
         self.acceleration += Vec2(-0.1, -0.1)
     
-    def restrict_speed(self, limit=1):
+    def restrict_speed(self, limit=1.2):
+        """
+        Restrict speed of acceleratin, which is later used in simulate_motion() to update position.
+        """
         accelx, accely = self.acceleration.totuple
         if accelx > limit: self.acceleration = Vec2(limit, self.acceleration.y)
         elif accelx < -limit: self.acceleration = Vec2(-limit, self.acceleration.y)
@@ -24,12 +27,11 @@ class Marble(RectEntity):
 
     def simulate_motion(self) -> None:
         """
-        Move position with acceleration.
+        Move position with acceleration. Update previous position and restrict speed of acceleration.
         """
         self.update_prev_pos()
         self.restrict_speed()
-        move = self.acceleration * (self.dtime**-1)
-        self.position += move
+        self.position += self.acceleration * (self.dtime**-1)
     
     def _move(self) -> None:
         """
@@ -79,9 +81,12 @@ class Marble(RectEntity):
             if collis != None:
                 self._bounce(collis)
 
+                # depending on velocity of paddle and so on. It will 
                 if collis.__class__.__name__ == "Paddle":
-                    #print(collis.velocity)
-                    self.acceleration += collis.velocity
-                #self._get_out(*entities)
-
+                    """Notes:
+                    1. if paddle is coming from same direction than really slow down
+                    2. if paddle is coming from opposite direction than add velocity
+                    3. bounce to direction based on place of paddle (use rotate vector)
+                    """
+                    self.acceleration += collis.velocity #* collis.material.bounce
             self._move()
