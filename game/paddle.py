@@ -39,13 +39,10 @@ class Paddle(RectEntity):
             if collis != None:
 
                 if collis.__class__.__name__ == "Marble": # accelerate marble depending on 'how' it hit it
-                    continue
-                    if collis.acceleration.x*self.velocity.x > 0 and collis.acceleration.y*self.velocity.y > 0:
-                        collis.acceleration += (self.velocity / dtime * 0.01).rotated_degrees(90)
-                        print("duh")
-                    else:
-                        print("ya")
-                        collis.acceleration += (self.velocity / dtime * 0.01).rotated_degrees(270)
+                    #print(self.velocity.get_angle)
+                    #collis.acceleration += self.velocity.rotated(self.position.get_angle())* 0.01 # left right
+                    #collis.acceleration += self.velocity.rotated(180-self.position.get_angle())* 0.0099 # up / bottom
+                    collis.acceleration += self.velocity / dtime
 
                 # Try slide across Y
                 new_pos_y = Vec2(self.position.x, new_pos.y) # pos along new Y

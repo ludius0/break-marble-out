@@ -142,7 +142,7 @@ class Vec2(NamedTuple):
         return self.rotated(math.radians(angle_of_degrees))
     
     def get_angle(self) -> float:
-        return 0. if self.length_sqrd() == 0. else math.degrees(math.atan2(self.y, self.x))
+        return 0. if self.length_sqrd == 0. else math.degrees(math.atan2(self.y, self.x))
 
     def get_angle_between(self, vector2d: "Vec2") -> float:
         return math.degrees(math.atan2(self.cross(vector2d), self.dot(vector2d)))
@@ -160,8 +160,8 @@ class Vec2(NamedTuple):
             self.y + (other[1] - self.y) * range_)
 
     def convert_to_basis(self, x_vec: "Vec2", y_vec: "Vec2") -> "Vec2":
-        return Vec2(self.dot(x_vec) / x_vec.length_sqrd(), \
-            self.dot(y_vec) / y_vec.length_sqrd())
+        return Vec2(self.dot(x_vec) / x_vec.length_sqrd, \
+            self.dot(y_vec) / y_vec.length_sqrd)
     
     def copy(self) -> "Vec2":
         return self
