@@ -16,10 +16,36 @@ class Paddle(RectEntity):
         super().__init__(width, height, position=pos, color=color)
     
     def get_mouse_pos(self) -> Vec2:
-        """Get mouse position from pygame and create new Vec2, where it will slightly adjust it based on width and height of 'Paddle'"""
+        """
+        Get mouse position from pygame and create new Vec2, where it will slightly adjust it based on width and height of 'Paddle'
+        """
         x, y = pygame.mouse.get_pos()
         xw, yh = self.get_middle()
         return Vec2(x-xw, y-yh)
+    
+    def _marble_case(self, marble, space=3) -> bool:
+        """
+        Special case if marble is stuck between player and entity, than stop moving 'Paddle'
+        """
+        _bounced_from = marble._last_bounce
+        _direction = [i for i in _bounced_from][0]
+        bounced_entity = _bounced_from[_direction]
+        if bounced_entity != None:
+            w, h = bounced_entity.width, bounced_entity.height
+
+            paddle_dis = self.position - bounced_entity.position
+            marble_dis = marble.position - bounced_entity.position
+
+            # if marble and paddle are on same level, than stop moving with 'Paddle'
+            if _direction == "top_bottom":
+                if abs(paddle_dis.y)-self.height-space <= abs(marble_dis) or abs(paddle_dis.y)-space <= abs(marble_dis.y):
+                    print("ya")
+                    return True
+            if _direction == "left_right":
+                if abs(paddle_dis.x)-self.width-space <= abs(marble_dis) or abs(paddle_dis.x)-space <= abs(marble_dis.x):
+                    print("da")
+                    return True
+        return False
     
     def _steps(self, delta_pos, dtime, *entities) -> None:
         """
@@ -36,15 +62,10 @@ class Paddle(RectEntity):
             collis = self.check_collision(*entities, rect=testing_rect)
             if collis != None:
                 
-                if collis.__class__.__name__ == "Marble": # special case if marble is stuck between player and entity
-                    m_vel = collis.position - collis.prev_pos
-                    print(m_vel)
-                    if abs(m_vel.x) > 0.001 or abs(m_vel.y) > 0.001:
-                        collis.acceleration /= 10
-                        print("ya")
-                    if abs(m_vel.x) == 0. and abs(m_vel.y) == 0.:
-                        collis.acceleration = delta_pos
-                    continue
+                #if collis.__class__.__name__ == "Marble": # special case if marble is stuck between player and entity
+                #    if self._marble_case(collis):
+                #        break
+                #    continue
 
                 # Try slide across Y
                 new_pos_y = Vec2(self.position.x, new_pos.y) # pos along new Y
