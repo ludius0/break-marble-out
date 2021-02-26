@@ -17,16 +17,16 @@ blocks.append(Block(100, 50, pos=Vec2(300, 120)))
 blocks.append(Block(100, 50, pos=Vec2(400, 200)))
 blocks.append(Block(100, 50, pos=Vec2(420, 290)))
 print("N of blocks:", len(blocks))
-wall1 = Block(1000, 10, pos=Vec2(0, 0))
-wall2 = Block(1000, 10, pos=Vec2(0, 800-10))
-wall3 = Block(10, 800, pos=Vec2(0, 0))
-wall4 = Block(10, 800, pos=Vec2(1000-10, 0))
+wall1 = Block(1000, 10, pos=Vec2(0, 0), color=(128, 128, 128))
+wall2 = Block(1000, 10, pos=Vec2(0, 800-10), color=(128, 128, 128))
+wall3 = Block(10, 800, pos=Vec2(0, 0), color=(128, 128, 128))
+wall4 = Block(10, 800, pos=Vec2(1000-10, 0), color=(128, 128, 128))
 walls = [wall1, wall2, wall3, wall4]
 
 while 1:
     # draw game
     win.draw_bg()
-    win.draw_entity(player, ball, *blocks)
+    win.draw_entity(player, ball, *blocks, *walls)
     win.update()
 
     # events

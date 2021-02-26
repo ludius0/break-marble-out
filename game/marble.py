@@ -13,7 +13,7 @@ class Marble(RectEntity):
     def __init__(self, width: int, height: int, pos=Vec2(600, 600), color=(0, 255, 0)) -> None:
         super().__init__(width, height, position=pos, color=color)
         self.acceleration += Vec2(-0.09, -0.09)
-        self._last_bounce = {"None": None}
+        self._last_bounce = [None, None]
     
     #def restrict_speed(self, limit=0.1):
     #    accelx, accely = self.acceleration.totuple
@@ -26,10 +26,13 @@ class Marble(RectEntity):
         """
         Move position with acceleration.
         """
+        self.update_prev_pos()
         self.position += self.acceleration
     
     def _bounce_from(self, entity):
-        pass
+        self._last_bounce.append(entity)
+        if len(self._last_bounce) > 2:
+            self._last_bounce.pop(0)
     
     def _move(self) -> None:
         """
@@ -40,11 +43,11 @@ class Marble(RectEntity):
     
     def _get_out(self, *entities) -> None:
         """
-        If stuck in some entities than update way out
+        If stuck in some entities than update way out.
         """
         while 1:
             collis = self.check_collision(*entities)
-            if collis != None:
+            if collis != None and collis.__class__.__name__ != "Paddle":
                 self._move()
             else:
                 break
@@ -57,18 +60,14 @@ class Marble(RectEntity):
         x, y = entity.position.totuple
         w, h = entity.width, entity.height
 
-        if self.prev_pos.x<=x+w and self.prev_pos.x+self.width>=x and (self.prev_pos.y+self.height-1>=y+h or self.prev_pos.y+1<=y): # bounce from top and bottom
+        if (self.prev_pos.x<=x+w and self.prev_pos.x+self.width>=x and (self.prev_pos.y+self.height-1>=y+h or self.prev_pos.y+1<=y)) and \
+            (self.position.x<=x+w and self.position.x+self.width>=x and (self.position.y+self.height-1>=y+h or self.position.y+1<=y)): # bounce from top and bottom
             self.acceleration = Vec2(self.acceleration.x, self.acceleration.y * -1)
-            _direction = "up_bottom"
-        elif self.prev_pos.y<=y+h and self.prev_pos.y+self.height>=y and (self.prev_pos.x+self.width>=x+w or self.prev_pos.x<=x):   # bounce from left and right sides
+        elif (self.prev_pos.y<=y+h and self.prev_pos.y+self.height>=y and (self.prev_pos.x+self.width>=x+w or self.prev_pos.x<=x)) and \
+            (self.position.y<=y+h and self.position.y+self.height>=y and (self.position.x+self.width>=x+w or self.position.x<=x)):   # bounce from left and right sides
             self.acceleration = Vec2(self.acceleration.x * -1, self.acceleration.y)
-            _direction = "left_right"
         else:   # bounce from corners
             self.acceleration = Vec2(self.acceleration.x * -1, self.acceleration.y * -1)
-            _direction = "corners"
-        
-        if entity.__class__.__name__ == "Paddle": # remember last bounce for special case in 'Paddle' _steps()
-            self._last_bounce = {_direction: entity}
 
     def update(self, *entities, dtime=1) -> None:
         """
@@ -78,5 +77,9 @@ class Marble(RectEntity):
         collis = self.check_collision(*entities)
         if collis != None:
             self._bounce(collis)
+
+            if collis.__class__.__name__ == "Paddle":
+                print(collis.velocity)
             #self._get_out(*entities)
+
         self._move()

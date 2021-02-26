@@ -28,6 +28,12 @@ class Entity():
     def accelerate(self, rate: float, dtime: float) -> None:
         self.acceleration += rate * dtime
     
+    def update_velocity(self):
+        self.velocity = self.position - self.prev_pos
+    
+    def update_prev_pos(self):
+        self.prev_pos = self.position
+    
     def reset_forces(self) -> None:
         self.acceleration = Vec2.zeros()
 
@@ -38,9 +44,9 @@ class Entity():
     @position.setter
     def position(self, new_vec: Vec2) -> None:
         assert isinstance(new_vec, Vec2)
-        self.prev_pos = self._position
+        #self.prev_pos = self._position
         self._position = new_vec
-        self.velocity = self.position - self.prev_pos
+        #self.velocity = self.position - self.prev_pos
     
     @property
     def prev_pos(self) -> Vec2:

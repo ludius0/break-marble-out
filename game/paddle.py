@@ -22,31 +22,7 @@ class Paddle(RectEntity):
         x, y = pygame.mouse.get_pos()
         xw, yh = self.get_middle()
         return Vec2(x-xw, y-yh)
-    
-    def _marble_case(self, marble, space=3) -> bool:
-        """
-        Special case if marble is stuck between player and entity, than stop moving 'Paddle'
-        """
-        _bounced_from = marble._last_bounce
-        _direction = [i for i in _bounced_from][0]
-        bounced_entity = _bounced_from[_direction]
-        if bounced_entity != None:
-            w, h = bounced_entity.width, bounced_entity.height
 
-            paddle_dis = self.position - bounced_entity.position
-            marble_dis = marble.position - bounced_entity.position
-
-            # if marble and paddle are on same level, than stop moving with 'Paddle'
-            if _direction == "top_bottom":
-                if abs(paddle_dis.y)-self.height-space <= abs(marble_dis) or abs(paddle_dis.y)-space <= abs(marble_dis.y):
-                    print("ya")
-                    return True
-            if _direction == "left_right":
-                if abs(paddle_dis.x)-self.width-space <= abs(marble_dis) or abs(paddle_dis.x)-space <= abs(marble_dis.x):
-                    print("da")
-                    return True
-        return False
-    
     def _steps(self, delta_pos, dtime, *entities) -> None:
         """
         This function is creatings steps from start position (self.position) to end position (self.position+(delta_pos*dtime) ->
@@ -61,11 +37,6 @@ class Paddle(RectEntity):
             # check if in new position is some collision
             collis = self.check_collision(*entities, rect=testing_rect)
             if collis != None:
-                
-                #if collis.__class__.__name__ == "Marble": # special case if marble is stuck between player and entity
-                #    if self._marble_case(collis):
-                #        break
-                #    continue
 
                 # Try slide across Y
                 new_pos_y = Vec2(self.position.x, new_pos.y) # pos along new Y
@@ -86,8 +57,11 @@ class Paddle(RectEntity):
                     break
                 break
             # update position and rectangle (pygame)
+            self.update_prev_pos()
             self.position = new_pos
             self.update_rect()
+        
+        self.velocity = self.position - _pos # for updating push by creating velocity
 
 
 
