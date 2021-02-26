@@ -84,9 +84,11 @@ class Marble(RectEntity):
                 # depending on velocity of paddle and so on. It will 
                 if collis.__class__.__name__ == "Paddle":
                     """Notes:
+                    A. do it all in Paddle (here are some issues with collision detection)
                     1. if paddle is coming from same direction than really slow down
                     2. if paddle is coming from opposite direction than add velocity
                     3. bounce to direction based on place of paddle (use rotate vector)
                     """
+                    print("ya")
                     self.acceleration += collis.velocity #* collis.material.bounce
             self._move()
