@@ -12,8 +12,7 @@ class Marble(RectEntity):
     """
     def __init__(self, width: int, height: int, pos=Vec2(600, 600), color=(0, 255, 0)) -> None:
         super().__init__(width, height, position=pos, color=color)
-        self.acceleration += Vec2(-0.09, -0.09)
-        self._last_bounce = [None, None]
+        self.acceleration += Vec2(-0.1, -0.1)
     
     #def restrict_speed(self, limit=0.1):
     #    accelx, accely = self.acceleration.totuple
@@ -28,11 +27,6 @@ class Marble(RectEntity):
         """
         self.update_prev_pos()
         self.position += self.acceleration
-    
-    def _bounce_from(self, entity):
-        self._last_bounce.append(entity)
-        if len(self._last_bounce) > 2:
-            self._last_bounce.pop(0)
     
     def _move(self) -> None:
         """
@@ -60,12 +54,14 @@ class Marble(RectEntity):
         x, y = entity.position.totuple
         w, h = entity.width, entity.height
 
-        if (self.prev_pos.x<=x+w and self.prev_pos.x+self.width>=x and (self.prev_pos.y+self.height-1>=y+h or self.prev_pos.y+1<=y)) and \
-            (self.position.x<=x+w and self.position.x+self.width>=x and (self.position.y+self.height-1>=y+h or self.position.y+1<=y)): # bounce from top and bottom
-            self.acceleration = Vec2(self.acceleration.x, self.acceleration.y * -1)
-        elif (self.prev_pos.y<=y+h and self.prev_pos.y+self.height>=y and (self.prev_pos.x+self.width>=x+w or self.prev_pos.x<=x)) and \
-            (self.position.y<=y+h and self.position.y+self.height>=y and (self.position.x+self.width>=x+w or self.position.x<=x)):   # bounce from left and right sides
-            self.acceleration = Vec2(self.acceleration.x * -1, self.acceleration.y)
+        if (self.prev_pos.x<=x+w-1 and self.prev_pos.x+self.width>=x+1 and (self.prev_pos.y+self.height//2>=y+h or self.prev_pos.y<=y)) and \
+            (self.position.x<=x+w-1 and self.position.x+self.width>=x+1 and (self.position.y+self.height//2>=y+h or self.position.y<=y)): # bounce from top and bottom
+            #self.acceleration = Vec2(self.acceleration.x, self.acceleration.y * -1)
+            self.acceleration = self.acceleration.rotated_degrees(90)
+        elif (self.prev_pos.y<=y+h-1 and self.prev_pos.y+self.height>=y+1 and (self.prev_pos.x+self.width>=x+w or self.prev_pos.x<=x)) and \
+            (self.position.y<=y+h-1 and self.position.y+self.height>=y+1 and (self.position.x+self.width>=x+w or self.position.x<=x)):   # bounce from left and right sides
+            #self.acceleration = Vec2(self.acceleration.x * -1, self.acceleration.y)
+            self.acceleration = self.acceleration.rotated_degrees(90)
         else:   # bounce from corners
             self.acceleration = Vec2(self.acceleration.x * -1, self.acceleration.y * -1)
 
@@ -79,7 +75,8 @@ class Marble(RectEntity):
             self._bounce(collis)
 
             if collis.__class__.__name__ == "Paddle":
-                print(collis.velocity)
+                #print(collis.velocity)
+                self.acceleration += collis.velocity
             #self._get_out(*entities)
 
         self._move()

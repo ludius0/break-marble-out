@@ -38,6 +38,15 @@ class Paddle(RectEntity):
             collis = self.check_collision(*entities, rect=testing_rect)
             if collis != None:
 
+                if collis.__class__.__name__ == "Marble": # accelerate marble depending on 'how' it hit it
+                    continue
+                    if collis.acceleration.x*self.velocity.x > 0 and collis.acceleration.y*self.velocity.y > 0:
+                        collis.acceleration += (self.velocity / dtime * 0.01).rotated_degrees(90)
+                        print("duh")
+                    else:
+                        print("ya")
+                        collis.acceleration += (self.velocity / dtime * 0.01).rotated_degrees(270)
+
                 # Try slide across Y
                 new_pos_y = Vec2(self.position.x, new_pos.y) # pos along new Y
                 rect_y = pygame.Rect(*new_pos_y, self.width, self.height)   # rect from new Y to check collision
