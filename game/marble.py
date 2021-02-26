@@ -28,7 +28,8 @@ class Marble(RectEntity):
         """
         self.update_prev_pos()
         self.restrict_speed()
-        self.position += self.acceleration
+        move = self.acceleration * (self.dtime**-1)
+        self.position += move
     
     def _move(self) -> None:
         """
@@ -60,10 +61,10 @@ class Marble(RectEntity):
         # overwhelmingly accurate way to find
         if (self.prev_pos.x<=x+w-1 and self.prev_pos.x+self.width>=x+1 and (self.prev_pos.y+self.height//2>=y+h or self.prev_pos.y<=y)) and \
             (self.position.x<=x+w-1 and self.position.x+self.width>=x+1 and (self.position.y+self.height//2>=y+h or self.position.y<=y)): # bounce from top and bottom
-            self.acceleration = Vec2(self.acceleration.x, self.acceleration.y * -1)
+            self.acceleration = self.acceleration.neg_y()
         elif (self.prev_pos.y<=y+h-1 and self.prev_pos.y+self.height>=y+1 and (self.prev_pos.x+self.width>=x+w or self.prev_pos.x<=x)) and \
             (self.position.y<=y+h-1 and self.position.y+self.height>=y+1 and (self.position.x+self.width>=x+w or self.position.x<=x)):   # bounce from left and right sides
-            self.acceleration = Vec2(self.acceleration.x * -1, self.acceleration.y)
+            self.acceleration = self.acceleration.neg_x()
         else:   # bounce from corners
             self.acceleration = self.acceleration.rotated_degrees(180)
 
@@ -72,13 +73,15 @@ class Marble(RectEntity):
         Backbone calculation for updating position of 'Marble'.
         """
         assert isinstance(dtime, int) and dtime != 0
-        collis = self.check_collision(*entities)
-        if collis != None:
-            self._bounce(collis)
+        self.dtime = dtime
+        for step in range(1, 1+dtime):
+            collis = self.check_collision(*entities)
+            if collis != None:
+                self._bounce(collis)
 
-            if collis.__class__.__name__ == "Paddle":
-                #print(collis.velocity)
-                self.acceleration += collis.velocity
-            #self._get_out(*entities)
+                if collis.__class__.__name__ == "Paddle":
+                    #print(collis.velocity)
+                    self.acceleration += collis.velocity
+                #self._get_out(*entities)
 
-        self._move()
+            self._move()

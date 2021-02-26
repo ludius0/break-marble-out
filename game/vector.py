@@ -98,6 +98,12 @@ class Vec2(NamedTuple):
     def neg(self) -> "Vec2":
         return self.__neg__()
     
+    def neg_x(self) -> "Vec2":
+        return Vec2(operator.neg(self.x), self.y)
+
+    def neg_y(self) -> "Vec2":
+        return Vec2(self.x, operator.neg(self.y))
+    
     def pos(self) -> "Vec2":
         return self.__pos__()
     

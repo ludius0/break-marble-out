@@ -4,7 +4,6 @@ from game import *
 pygame.init()
 
 # init game structure
-dtime = 10
 win = Render((1000, 800))
 player = Paddle(100, 50)
 ball = Marble(12, 12)
@@ -36,8 +35,8 @@ while 1:
             sys.exit()
     
     # update game
-    ball.update(player, *blocks, *walls, dtime=1)
-    player.update(ball, *blocks, *walls, dtime=dtime)
+    ball.update(player, *blocks, *walls, dtime=100)
+    player.update(ball, *blocks, *walls, dtime=10)
 
 """    new_blocks = []
     for idx, b in enumerate(blocks):
