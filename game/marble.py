@@ -43,7 +43,8 @@ class Marble(RectEntity):
         """
         while 1:
             collis = self.check_collision(*entities)
-            if collis != None and collis.__class__.__name__ != "Paddle":
+            if collis != None:
+                self._bounce(collis)
                 self._move()
             else:
                 break
