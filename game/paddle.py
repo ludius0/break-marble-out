@@ -14,6 +14,7 @@ class Paddle(RectEntity):
     """
     def __init__(self, width: int, height: int, pos=Vec2(600, 600), color=(0, 0, 255)) -> None:
         super().__init__(width, height, position=pos, color=color)
+        self._rem_vel = Vec2(0., 0.)
     
     def get_mouse_pos(self) -> Vec2:
         """
@@ -39,7 +40,16 @@ class Paddle(RectEntity):
             if collis != None:
 
                 if collis.__class__.__name__ == "Marble" and step == 1:
-                    print("Hit")
+                    """Notes:
+                    1. if paddle is coming from same direction than really slow down
+                    2. if paddle is coming from opposite direction than add velocity
+                    3. bounce to direction based on place of paddle (use rotate vector)
+                    """
+                    if self.velocity.x*collis.acceleration.x > 0:
+                        collis.acceleration += self.velocity * self.material.bounce
+                    else:
+                        collis.acceleration -= self.velocity * self.material.bounce
+                    break
 
                 # Try slide across Y
                 new_pos_y = Vec2(self.position.x, new_pos.y) # pos along new Y
@@ -64,8 +74,7 @@ class Paddle(RectEntity):
             self.position = new_pos
             self.update_rect()
         
-        self.velocity = self.position - _pos # for updating push by creating velocity
-
+        self.velocity = (self.velocity + self.position - _pos) / 2 # for updating push by creating velocity
 
 
     def update(self, *entities, dtime=1) -> None:
